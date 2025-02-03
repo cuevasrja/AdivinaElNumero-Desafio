@@ -22,6 +22,7 @@ class StatusLabels extends StatelessWidget {
         ),
         Text(
           'Intentos restantes: $numberTries',
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       ],
     );

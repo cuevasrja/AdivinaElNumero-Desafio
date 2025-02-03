@@ -14,8 +14,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Adivina el número',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 174, 0)),
         useMaterial3: true,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white, fontSize: 18),
+          bodyMedium: TextStyle(color: Colors.white, fontSize: 18),
+          headlineMedium: TextStyle(color: Colors.white, fontSize: 24),
+        ),
       ),
       home: const MyHomePage(title: 'Adivina el número'),
     );
@@ -148,41 +153,48 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            StatusLabels(
-              guessNumber: _guessNumber,
-              numberTries: _numberTries,
-              lastGuess: _lastGuess,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _controller,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Ingrese un número',
-                ),
-                keyboardType: TextInputType.number,
-                onSubmitted: (value) {
-                  setState(() {
-                    _guessNumber = int.tryParse(value) ?? -1;
-                    if (_min <= _guessNumber && _guessNumber <= _max) {
-                      _checkNumber(_guessNumber);
-                    }
-                  });
-                },
+      body: Container(
+        color: const Color.fromARGB(255, 47, 96, 129),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              StatusLabels(
+                guessNumber: _guessNumber,
+                numberTries: _numberTries,
+                lastGuess: _lastGuess,
               ),
-            ),
-            DifficultySlider(
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    labelText: 'Ingrese un número',
+                    labelStyle: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  keyboardType: TextInputType.number,
+                  onSubmitted: (value) {
+                    setState(() {
+                      _guessNumber = int.tryParse(value) ?? -1;
+                      if (_min <= _guessNumber && _guessNumber <= _max) {
+                        _checkNumber(_guessNumber);
+                      }
+                    });
+                  },
+                ),
+              ),
+              DifficultySlider(
                 difficultyLevel: _difficultyLevel,
                 onChanged: _setDifficultyFromSlider,
                 difficulties: _difficulties,
                 difficulty: _difficulty,
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

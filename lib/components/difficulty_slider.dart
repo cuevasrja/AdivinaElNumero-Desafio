@@ -20,7 +20,10 @@ class DifficultySlider extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Text('Seleccione el nivel de dificultad:'),
+          Text(
+            'Seleccione el nivel de dificultad:',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           Slider(
             value: difficultyLevel,
             min: 0,
