@@ -87,15 +87,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _lowNumbers = [];
     _highNumbers = [];
     _guessNumber = 0;
-    if (_difficulty == 'easy') {
+    if (_difficulty.compareTo('easy') == 0) {
       _min = 1;
       _max = 10;
       _numberTries = 5;
-    } else if (_difficulty == 'medium') {
+    } else if (_difficulty.compareTo('medium') == 0) {
       _min = 1;
       _max = 20;
       _numberTries = 8;
-    } else if (_difficulty == 'hard') {
+    } else if (_difficulty.compareTo('hard') == 0) {
       _min = 1;
       _max = 100;
       _numberTries = 15;
@@ -130,6 +130,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  String _lastGuess(int number) {
+    if (number == -1){
+      return 'No ingresó un número válido';
+    } else if (number == 0){
+      return 'No ha ingresado un número';
+    } else {
+      return number.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +152,11 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Último número ingresado: ${_guessNumber == -1 ? 'No ingresó un número válido' : _guessNumber.toString()}',
+              'Último número ingresado: ${_lastGuess(_guessNumber)}',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              'Intentos restantes: $_numberTries',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Padding(
@@ -165,6 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ),
+
           ],
         ),
       ),
