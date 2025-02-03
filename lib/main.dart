@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'components/difficulty_slider.dart';
+import 'components/status_labels.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,27 +9,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Adivina el número',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -38,16 +24,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -74,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _lowNumbers = [];
   List<int> _highNumbers = [];
   int _numberTries = 5;
-  List<NumberGuess> _guesses = [];
+  final List<NumberGuess> _guesses = [];
 
   @override
   void dispose() {
@@ -155,13 +131,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  String _lastGuess(int number) {
-    if (number == -1){
-      return 'No ingresó un número válido';
-    } else if (number == 0){
-      return 'No ha ingresado un número';
-    } else {
-      return number.toString();
+  String _lastGuess() {
+    switch (_guessNumber) {
+      case 0:
+        return 'No ha ingresado un número';
+      case -1:
+        return 'Número no válido';
+      default:
+        return _guessNumber.toString();
     }
   }
 
@@ -175,9 +152,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Último número ingresado: ${_lastGuess(_guessNumber)}',
-              style: Theme.of(context).textTheme.headlineMedium,
+            StatusLabels(
+              guessNumber: _guessNumber,
+              numberTries: _numberTries,
+              lastGuess: _lastGuess,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -190,38 +168,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 keyboardType: TextInputType.number,
                 onSubmitted: (value) {
                   setState(() {
-                    _guessNumber = int.tryParse(value) ?? 0;
+                    _guessNumber = int.tryParse(value) ?? -1;
                     if (_min <= _guessNumber && _guessNumber <= _max) {
                       _checkNumber(_guessNumber);
-                    } else {
-                      _guessNumber = -1;
                     }
                   });
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text('Seleccione el nivel de dificultad:'),
-                  Text('Dificultad: $_difficulty'),
-                  Slider(
-                    value: _difficultyLevel,
-                    min: 0,
-                    max: 3,
-                    divisions: 3,
-                    label: _difficultyLevel == 0
-                        ? 'easy'
-                        : _difficultyLevel == 1
-                            ? 'medium'
-                            : _difficultyLevel == 2
-                                ? 'hard'
-                                : 'extreme',
-                    onChanged: _setDifficultyFromSlider,
-                  ),
-                ],
-              ),
+            DifficultySlider(
+                difficultyLevel: _difficultyLevel,
+                onChanged: _setDifficultyFromSlider,
+                difficulties: _difficulties,
+                difficulty: _difficulty,
             ),
           ],
         ),
