@@ -61,16 +61,26 @@ class NumberGuess {
   NumberGuess(this.number, this.isCorrect);
 }
 
+List<String> _difficulties = ['Fácil', 'Medio', 'Difícil', 'Extremo'];
+
 class _MyHomePageState extends State<MyHomePage> {
+  final TextEditingController _controller = TextEditingController();
   int _min = 1;
   int _max = 10;
-  String _difficulty = 'easy';
+  String _difficulty = _difficulties[0];
+  double _difficultyLevel = 0;
   int _numberToGuess = 0;
   int _guessNumber = 0;
   List<int> _lowNumbers = [];
   List<int> _highNumbers = [];
   int _numberTries = 5;
   List<NumberGuess> _guesses = [];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _decrementCounter() {
     setState(() {
@@ -87,28 +97,43 @@ class _MyHomePageState extends State<MyHomePage> {
     _lowNumbers = [];
     _highNumbers = [];
     _guessNumber = 0;
-    if (_difficulty.compareTo('easy') == 0) {
-      _min = 1;
-      _max = 10;
-      _numberTries = 5;
-    } else if (_difficulty.compareTo('medium') == 0) {
-      _min = 1;
-      _max = 20;
-      _numberTries = 8;
-    } else if (_difficulty.compareTo('hard') == 0) {
-      _min = 1;
-      _max = 100;
-      _numberTries = 15;
-    } else {
-      _min = 1;
-      _max = 1000;
-      _numberTries = 25;
+    switch (_difficultyLevel.toInt()) {
+      case 0:
+        _min = 1;
+        _max = 10;
+        _numberTries = 5;
+        break;
+      case 1:
+        _min = 1;
+        _max = 20;
+        _numberTries = 8;
+        break;
+      case 2:
+        _min = 1;
+        _max = 100;
+        _numberTries = 15;
+        break;
+      case 3:
+        _min = 1;
+        _max = 1000;
+        _numberTries = 25;
+        break;
     }
   }
 
   void _setDifficulty(String difficulty) {
     _difficulty = difficulty;
     _resetGame();
+  }
+
+  void _setDifficultyFromSlider(double value) {
+    setState(() {
+      _difficultyLevel = value;
+      int level = value.toInt();
+      if (0 <= level && level < _difficulties.length) {
+        _setDifficulty(_difficulties[level]);
+      }
+    });
   }
 
   void _checkNumber(int number) {
@@ -144,7 +169,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
@@ -155,13 +179,10 @@ class _MyHomePageState extends State<MyHomePage> {
               'Último número ingresado: ${_lastGuess(_guessNumber)}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Text(
-              'Intentos restantes: $_numberTries',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
+                controller: _controller,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Ingrese un número',
@@ -170,16 +191,38 @@ class _MyHomePageState extends State<MyHomePage> {
                 onSubmitted: (value) {
                   setState(() {
                     _guessNumber = int.tryParse(value) ?? 0;
-                    if (_guessNumber < _min || _guessNumber > _max) {
-                      _guessNumber = -1;
-                    } else {
+                    if (_min <= _guessNumber && _guessNumber <= _max) {
                       _checkNumber(_guessNumber);
+                    } else {
+                      _guessNumber = -1;
                     }
                   });
                 },
               ),
             ),
-
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Text('Seleccione el nivel de dificultad:'),
+                  Text('Dificultad: $_difficulty'),
+                  Slider(
+                    value: _difficultyLevel,
+                    min: 0,
+                    max: 3,
+                    divisions: 3,
+                    label: _difficultyLevel == 0
+                        ? 'easy'
+                        : _difficultyLevel == 1
+                            ? 'medium'
+                            : _difficultyLevel == 2
+                                ? 'hard'
+                                : 'extreme',
+                    onChanged: _setDifficultyFromSlider,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
