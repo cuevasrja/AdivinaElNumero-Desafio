@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'components/difficulty_slider.dart';
 import 'components/status_labels.dart';
 import 'components/guess_columns.dart';
+import 'components/guess_input.dart';
 import 'classes/number_guess.dart';
 
 void main() {
@@ -40,34 +41,44 @@ class MyHomePage extends StatefulWidget {
 List<String> _difficulties = ['Fácil', 'Medio', 'Difícil', 'Extremo'];
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Define a controller for the text field
   final TextEditingController _controller = TextEditingController();
+  // Define the range of numbers to guess
   int _min = 1;
   int _max = 10;
+  // Set the initial difficulty level as the first element of the list
   String _difficulty = _difficulties[0];
   double _difficultyLevel = 0;
+  // Generate a random number to guess
   int _numberToGuess = 1 + (DateTime.now().millisecond % (10));
+  // Initialize the guess number, low and high numbers, and number of tries
   int _guessNumber = 0;
   List<int> _lowNumbers = [];
   List<int> _highNumbers = [];
   int _numberTries = 5;
+  // Initialize the list of guesses
   final List<NumberGuess> _guesses = [];
 
+  /// Initialize the controller
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  /// Decrement the number of tries
   void _decrementCounter() {
     setState(() {
       _numberTries--;
     });
   }
 
+  /// Generate a random number to guess
   void _generateNumber() {
     _numberToGuess = _min + (DateTime.now().millisecond % (_max - _min + 1));
   }
 
+  /// Reset the game
   void _resetGame() {
     _lowNumbers = [];
     _highNumbers = [];
@@ -97,10 +108,14 @@ class _MyHomePageState extends State<MyHomePage> {
     _generateNumber();
   }
 
+  /// Set the difficulty level
+  /// - [difficulty] the difficulty level
   void _setDifficulty(String difficulty) {
     _difficulty = difficulty;
   }
 
+  /// Set the difficulty level from the slider
+  /// - [value] the value of the slider
   void _setDifficultyFromSlider(double value) {
     setState(() {
       _difficultyLevel = value;
@@ -112,6 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Check the number
+  /// - [number] the number to check
   void _checkNumber(int number) {
     if (number == _numberToGuess) {
       _guesses.add(NumberGuess(number, true));
@@ -130,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  /// Get the last guess
   String _lastGuess() {
     switch (_guessNumber) {
       case 0:
@@ -160,28 +178,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 minRange: _min,
                 maxRange: _max,
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    labelText: 'Ingrese un número',
-                    labelStyle: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  keyboardType: TextInputType.number,
-                  onSubmitted: (value) {
-                    setState(() {
-                      _guessNumber = int.tryParse(value) ?? -1;
-                      if (_min <= _guessNumber && _guessNumber <= _max) {
-                        _checkNumber(_guessNumber);
-                      }
-                    });
-                  },
-                ),
+              GuessInput(
+                controller: _controller,
+                onSubmitted: (guessNumber) {
+                  setState(() {
+                    _guessNumber = guessNumber;
+                    _checkNumber(_guessNumber);
+                  });
+                },
+                min: _min,
+                max: _max,
               ),
               GuessColumns(
                 lowNumbers: _lowNumbers,
