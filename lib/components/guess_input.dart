@@ -34,6 +34,7 @@ class GuessInput extends StatelessWidget {
           if (min <= guessNumber && guessNumber <= max) {
             onSubmitted(guessNumber);
           }
+          controller.clear();
         },
       ),
     );
