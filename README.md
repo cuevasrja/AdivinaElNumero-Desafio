@@ -1,16 +1,30 @@
-# adivina_numero_desafio
+# Adivina el número
 
-A new Flutter project.
+## Descripción
 
-## Getting Started
+Este es un juego en el que el usuario debe adivinar un número aleatorio entre 1 y un número máximo según la dificultad seleccionada por el usuario.
 
-This project is a starting point for a Flutter application.
+## Requisitos
 
-A few resources to get you started if this is your first Flutter project:
+- Dart
+- Flutter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Instalación
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1.Clonar el repositorio
+
+```bash
+git clone
+```
+
+2.Instalar las dependencias
+
+```bash
+flutter pub get
+```
+
+## Uso
+
+```bash
+flutter run
+```
