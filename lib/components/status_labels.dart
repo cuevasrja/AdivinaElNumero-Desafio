@@ -4,13 +4,17 @@ class StatusLabels extends StatelessWidget {
   final int guessNumber;
   final int numberTries;
   final String Function() lastGuess;
+  final int minRange;
+  final int maxRange;
 
   const StatusLabels({
-    Key? key,
+    super.key,
     required this.guessNumber,
     required this.numberTries,
     required this.lastGuess,
-  }) : super(key: key);
+    required this.minRange,
+    required this.maxRange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,10 @@ class StatusLabels extends StatelessWidget {
           'Intentos restantes: $numberTries',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
+        Text(
+          'Rango de números: $minRange - $maxRange',
+          style: Theme.of(context).textTheme.bodyLarge,
+        )
       ],
     );
   }

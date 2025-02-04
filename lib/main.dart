@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'components/difficulty_slider.dart';
 import 'components/status_labels.dart';
+import 'components/guess_columns.dart';
+import 'classes/number_guess.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,13 +37,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class NumberGuess {
-  final int number;
-  final bool isCorrect;
-
-  NumberGuess(this.number, this.isCorrect);
-}
-
 List<String> _difficulties = ['Fácil', 'Medio', 'Difícil', 'Extremo'];
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -50,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _max = 10;
   String _difficulty = _difficulties[0];
   double _difficultyLevel = 0;
-  int _numberToGuess = 0;
+  int _numberToGuess = 1 + (DateTime.now().millisecond % (10));
   int _guessNumber = 0;
   List<int> _lowNumbers = [];
   List<int> _highNumbers = [];
@@ -74,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _resetGame() {
-    _generateNumber();
     _lowNumbers = [];
     _highNumbers = [];
     _guessNumber = 0;
@@ -100,11 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
         _numberTries = 25;
         break;
     }
+    _generateNumber();
   }
 
   void _setDifficulty(String difficulty) {
     _difficulty = difficulty;
-    _resetGame();
   }
 
   void _setDifficultyFromSlider(double value) {
@@ -113,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
       int level = value.toInt();
       if (0 <= level && level < _difficulties.length) {
         _setDifficulty(_difficulties[level]);
+        _resetGame();
       }
     });
   }
@@ -127,11 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         _highNumbers.add(number);
       }
-      _guesses.add(NumberGuess(number, false));
       _decrementCounter();
       if (_numberTries == 0) {
         _resetGame();
-        _guesses.add(NumberGuess(_numberToGuess, false));
+        _guesses.add(NumberGuess(number, false));
       }
     }
   }
@@ -163,6 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 guessNumber: _guessNumber,
                 numberTries: _numberTries,
                 lastGuess: _lastGuess,
+                minRange: _min,
+                maxRange: _max,
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -186,6 +182,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                   },
                 ),
+              ),
+              GuessColumns(
+                lowNumbers: _lowNumbers,
+                highNumbers: _highNumbers,
+                guesses: _guesses,
               ),
               DifficultySlider(
                 difficultyLevel: _difficultyLevel,
