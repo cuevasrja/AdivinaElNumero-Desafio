@@ -18,9 +18,13 @@ class GuessColumns extends StatelessWidget {
     return Expanded(
       child: Row(
         children: [
+          _buildSeparator(),
           _buildColumn('Números Menores', lowNumbers),
+          _buildSeparator(),
           _buildColumn('Números Mayores', highNumbers),
+          _buildSeparator(),
           _buildGuessesColumn('Resultados', guesses),
+          _buildSeparator(),
         ],
       ),
     );
@@ -28,57 +32,71 @@ class GuessColumns extends StatelessWidget {
 
   Widget _buildColumn(String title, List<int> numbers) {
     return Expanded(
-      child: Column(
-        children: [
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 18)),
-          Expanded(
-            child: ListView.builder(
-              itemCount: numbers.length,
-              itemBuilder: (context, index) {
-                return Center(
-                  child: ListTile(
-                    title: Center(
-                      child: Text(
-                        numbers[index].toString(),
-                        style: TextStyle(color: Colors.white),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white),
+        ),
+        child: Column(
+          children: [
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 18)),
+            Expanded(
+              child: ListView.builder(
+                itemCount: numbers.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: ListTile(
+                      title: Center(
+                        child: Text(
+                          numbers[index].toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildGuessesColumn(String title, List<NumberGuess> guesses) {
     return Expanded(
-      child: Column(
-        children: [
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 18)),
-          Expanded(
-            child: ListView.builder(
-              itemCount: guesses.length,
-              itemBuilder: (context, index) {
-                return Center(
-                  child: ListTile(
-                    title: Center(
-                      child: Text(
-                        guesses[index].number.toString(),
-                        style: TextStyle(
-                          color: guesses[index].isCorrect ? Colors.green : Colors.red,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white),
+        ),
+        child: Column(
+          children: [
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 18)),
+            Expanded(
+              child: ListView.builder(
+                itemCount: guesses.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: ListTile(
+                      title: Center(
+                        child: Text(
+                          guesses[index].number.toString(),
+                          style: TextStyle(
+                            color: guesses[index].isCorrect ? Colors.green : Colors.red,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _buildSeparator() {
+    return SizedBox(width: 16);
   }
 }
